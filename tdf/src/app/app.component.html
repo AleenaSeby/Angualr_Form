@@ -1,0 +1,84 @@
+<div class="container-fluid mb-5">
+  <h1>Registration Form</h1>
+  <div class="alert alert-danger" *ngIf="errorMsg">{{errorMsg}}</div>
+  <!-- novalidate will prevent browser validation from kicking in when clicking the submit button  -->
+  <form #regForm="ngForm" *ngIf="!submitted" (ngSubmit)="onSubmit(regForm)" novalidate>
+    <!-- {{ regForm.value | json }}
+    <hr/>
+    {{userModel | json}}
+    <hr/> -->
+
+    <!-- ngForm provides overall form validation -->
+    {{regForm.form.valid}}
+    <div class="form-group">
+      <label for="name">Name</label>
+      <!-- apply the class is-invalid when the name form control is invalid and touched -->
+      <input type="text" #name='ngModel' required name="username" [class.is-invalid]="name.invalid && name.touched"
+        class="form-control" [(ngModel)]="userModel.name">
+      <!-- do not show the error msg if form control has been valid or been touched -->
+      <small class="text-danger" [class.d-none]="name.valid || name.untouched">Name is required</small>
+    </div>
+    {{name.untouched}}
+    {{name.pristine}}
+    {{name.valid}}
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" name="email" class="form-control" [(ngModel)]="userModel.email">
+    </div>
+
+    <!-- Form group example -->
+    <!-- <div ngModelGroup="address">
+      <div class="form-group">
+        <label for="name">Street</label>
+        <input type="text" name="street" class="form-control" ngModel>
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" name="city" class="form-control" ngModel>
+      </div>
+      <div class="form-group">
+        <label for="state">State</label>
+        <input type="text" name="state" class="form-control" ngModel>
+      </div>
+    </div> -->
+    <div class="form-group">
+      <label for="phone">Phone</label>
+      <input type="tel" name="phone" #phone='ngModel' [class.is-invalid]="phone.invalid && phone.touched"
+        class="form-control" [(ngModel)]="userModel.phone" pattern="^\d{10}$" required>
+      <!-- <small class="text-danger" [class.d-none]="phone.valid || phone.untouched">Phone number is required and must be 10 digits</small> -->
+      <div *ngIf="phone.errors && (phone.invalid || phone.touched)">
+        <!-- errors property on ngModel -->
+        <small class="text-danger" *ngIf="phone.errors.required">Phone number is required.</small>
+        <small class="text-danger" *ngIf="phone.errors.pattern">Phone number must be 10 digits</small>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <select class="custom-select" (blur)="validateTopic(topic.value)" (change)="validateTopic(topic.value)"
+        #topic="ngModel" required [class.is-invalid]="topicHasError && topic.touched" name="topic"
+        [(ngModel)]="userModel.topic">
+        <option value="default">Select any</option>
+        <option *ngFor="let t of topics">{{t}}</option>
+      </select>
+      <!-- <div *ngIf="topic.errors && (topic.invalid || topic.touched)">
+      </div> -->
+      <!-- if topic have no error or topic field is not even touched , dont display the error msg -->
+      <small class="text-danger" [class.d-none]="!topicHasError || topic.untouched">Please choose a Topic </small>
+    </div>
+    <div class="mb-3">
+      <label for="timePreference">Time</label>
+      <div class="form-check">
+        <input type="text" class="form-check-input" type="radio" name="timePreference" value="morning"
+          [(ngModel)]="userModel.timePreference">
+        <label for="timePreference" class="form-check-label">Morning</label>
+      </div>
+      <div class="form-check">
+        <input type="text" class="form-check-input" type="radio" name="timePreference" value="evening"
+          [(ngModel)]="userModel.timePreference">
+        <label for="timePreference" class="form-check-label">Evening</label>
+      </div>
+    </div>
+    <!-- Button will be disabled when form is invalid and when selector topic has an error(default value) -->
+    <button [disabled]="regForm.form.invalid || topicHasError" class="btn btn-primary" type="submit">Submit</button>
+  </form>
+</div>
